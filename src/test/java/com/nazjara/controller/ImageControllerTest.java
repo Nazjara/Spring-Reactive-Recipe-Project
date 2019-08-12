@@ -39,7 +39,7 @@ public class ImageControllerTest {
         multipartFile = new MockMultipartFile("image", "testing.txt", "text/plain",
                         "test".getBytes());
 
-        doNothing().when(imageService).saveImage(anyLong(), any());
+        doNothing().when(imageService).saveImage(anyString(), any());
     }
 
     @Test
@@ -55,13 +55,6 @@ public class ImageControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(header().string("Location", "/recipe/1"));
 
-        verify(imageService).saveImage(eq(1L), eq(multipartFile));
-    }
-
-    @Test
-    public void testGetRecipeWithWrongId() throws Exception {
-        mockMvc.perform(multipart("/recipe/text/image").file(multipartFile))
-                .andExpect(status().isBadRequest())
-                .andExpect(view().name("error"));
+        verify(imageService).saveImage(eq("1"), eq(multipartFile));
     }
 }

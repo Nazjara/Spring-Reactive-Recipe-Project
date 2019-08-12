@@ -4,6 +4,6 @@ import com.nazjara.command.IngredientCommand;
 
 public interface IngredientService {
     IngredientCommand saveIngredientCommand(IngredientCommand ingredientCommand);
-    IngredientCommand findIngredientCommandById(Long id);
-    void deleteById(Long id);
+    IngredientCommand findIngredientCommandById(String recipeId, String ingredientId);
+    void deleteById(String recipeId, String ingredientId);
 }

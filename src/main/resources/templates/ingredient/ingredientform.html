@@ -19,7 +19,7 @@
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <form th:object="${ingredient}" th:action="@{'/ingredient'} " method="post">
+            <form th:object="${ingredient}" th:action="@{'/recipe/' + ${recipeId} + '/ingredient'} " method="post">
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" th:field="*{recipeId}"/>
                 <div class="pannel-group">

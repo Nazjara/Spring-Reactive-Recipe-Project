@@ -1,21 +1,12 @@
 package com.nazjara.model;
 
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
 
 @Data
-@Entity
 public class Notes {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Lob
+    private String id;
     private String recipeNotes;
-
-    @OneToOne
     private Recipe recipe;
 
     public Notes(String recipeNotes) {

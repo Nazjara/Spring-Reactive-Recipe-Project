@@ -1,25 +1,19 @@
 package com.nazjara.model;
 
-import lombok.*;
+import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import javax.persistence.*;
+import java.util.UUID;
 
 @Data
-@Entity
 public class Ingredient {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private String id = UUID.randomUUID().toString();
     private String description;
     private String amount;
-
-    @ManyToOne
-    @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    @OneToOne
+    @DBRef
     private UnitOfMeasure unitOfMeasure;
 
     public Ingredient() {

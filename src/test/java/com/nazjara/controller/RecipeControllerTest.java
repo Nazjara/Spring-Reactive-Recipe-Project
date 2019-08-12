@@ -39,11 +39,11 @@ public class RecipeControllerTest {
                .standaloneSetup(recipeController)
                .setControllerAdvice(new ControllerExceptionHandler()).build();
 
-       when(recipeService.findRecipeCommandById(anyLong())).thenReturn(recipeCommand);
+       when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
        when(recipeCommand.getImage()).thenReturn(getClass().getClassLoader().getResourceAsStream("GrilledChickenTacos.jpg").readAllBytes());
-       when(recipeCommand.getId()).thenReturn(2L);
+       when(recipeCommand.getId()).thenReturn("2");
        when(recipeService.saveRecipeCommand(any())).thenReturn(recipeCommand);
-       when(recipeService.findRecipeCommandById(anyLong())).thenReturn(recipeCommand);
+       when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
     }
 
     @Test
@@ -54,25 +54,18 @@ public class RecipeControllerTest {
                .andExpect(model().attributeExists("recipe"))
                .andExpect(model().attributeExists("image"));
 
-       verify(recipeService).findRecipeCommandById(1L);
+       verify(recipeService).findRecipeCommandById("1");
     }
 
     @Test
     public void testGetRecipeNotFound() throws Exception {
-        when(recipeService.findRecipeCommandById(1L)).thenThrow(NotFoundException.class);
+        when(recipeService.findRecipeCommandById("1")).thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/recipe/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(view().name("error"));
 
-        verify(recipeService).findRecipeCommandById(1L);
-    }
-
-    @Test
-    public void testGetRecipeWithWrongId() throws Exception {
-        mockMvc.perform(get("/recipe/text"))
-                .andExpect(status().isBadRequest())
-                .andExpect(view().name("error"));
+        verify(recipeService).findRecipeCommandById("1");
     }
 
     @Test
@@ -117,7 +110,7 @@ public class RecipeControllerTest {
                 .andExpect(view().name("recipe/recipeform"))
                 .andExpect(model().attributeExists("recipe"));
 
-        verify(recipeService).findRecipeCommandById(1L);
+        verify(recipeService).findRecipeCommandById("1");
     }
 
     @Test
@@ -126,6 +119,6 @@ public class RecipeControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
 
-        verify(recipeService).deleteById(eq(1L));
+        verify(recipeService).deleteById(eq("1"));
     }
 }
