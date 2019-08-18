@@ -20,7 +20,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void saveImage(String recipeId, MultipartFile image) {
-        Recipe recipe = recipeRepository.findById(recipeId).get();
+        Recipe recipe = recipeRepository.findById(recipeId).block();
 
         try {
             recipe.setImage(image.getBytes());
@@ -28,6 +28,6 @@ public class ImageServiceImpl implements ImageService {
             log.error("Unable to save image", e);
         }
 
-        recipeRepository.save(recipe);
+        recipeRepository.save(recipe).block();
     }
 }

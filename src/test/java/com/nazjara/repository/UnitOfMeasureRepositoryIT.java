@@ -1,6 +1,5 @@
 package com.nazjara.repository;
 
-import com.nazjara.DataLoader;
 import com.nazjara.model.UnitOfMeasure;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,45 +8,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
 public class UnitOfMeasureRepositoryIT {
 
+    public static final String EACH = "Each";
+
     @Autowired
     UnitOfMeasureRepository unitOfMeasureRepository;
 
-    @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    RecipeRepository recipeRepository;
-
     @Before
     public void setUp() throws Exception {
-        recipeRepository.deleteAll();
-        unitOfMeasureRepository.deleteAll();
-        categoryRepository.deleteAll();
-
-        DataLoader dataLoader = new DataLoader(categoryRepository, recipeRepository, unitOfMeasureRepository);
-
-        dataLoader.onApplicationEvent(null);
+        unitOfMeasureRepository.deleteAll().block();
     }
 
     @Test
-    public void findByDescription() throws Exception {
-        Optional<UnitOfMeasure> uomOptional = unitOfMeasureRepository.findByDescription("Teaspoon");
+    public void testSaveUom() throws Exception {
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setDescription(EACH);
 
-        assertEquals("Teaspoon", uomOptional.get().getDescription());
+        unitOfMeasureRepository.save(uom).block();
+
+        Long count = unitOfMeasureRepository.count().block();
+
+        assertEquals(Long.valueOf(1L), count);
+
     }
 
     @Test
-    public void findByDescriptionCup() throws Exception {
-        Optional<UnitOfMeasure> uomOptional = unitOfMeasureRepository.findByDescription("Cup");
+    public void testFindByDescription() throws Exception {
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setDescription(EACH);
 
-        assertEquals("Cup", uomOptional.get().getDescription());
+        unitOfMeasureRepository.save(uom).block();
+
+        UnitOfMeasure fetchedUOM = unitOfMeasureRepository.findByDescription(EACH).block();
+
+        assertEquals(EACH, fetchedUOM.getDescription());
+
     }
 }

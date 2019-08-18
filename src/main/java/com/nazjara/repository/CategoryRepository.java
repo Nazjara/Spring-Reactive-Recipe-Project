@@ -1,11 +1,9 @@
 package com.nazjara.repository;
 
 import com.nazjara.model.Category;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-public interface CategoryRepository extends CrudRepository<Category, String> {
-
-    Optional<Category> findByDescription(String description);
+public interface CategoryRepository extends ReactiveMongoRepository<Category, String> {
+    Mono<Category> findByDescription(String description);
 }

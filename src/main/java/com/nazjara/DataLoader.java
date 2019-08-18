@@ -22,7 +22,8 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
     private UnitOfMeasureRepository unitOfMeasureRepository;
 
     @Autowired
-    public DataLoader(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
+    public DataLoader(CategoryRepository categoryRepository, RecipeRepository recipeRepository,
+                      UnitOfMeasureRepository unitOfMeasureRepository) {
         this.categoryRepository = categoryRepository;
         this.recipeRepository = recipeRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
@@ -35,55 +36,55 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
         Category cat1 = new Category();
         cat1.setDescription("Ukrainian");
-        categoryRepository.save(cat1);
+        categoryRepository.save(cat1).block();
 
         Category cat2 = new Category();
         cat2.setDescription("American");
-        categoryRepository.save(cat2);
+        categoryRepository.save(cat2).block();
 
         Category cat3 = new Category();
         cat3.setDescription("Italian");
-        categoryRepository.save(cat3);
+        categoryRepository.save(cat3).block();
 
         Category cat4 = new Category();
         cat4.setDescription("Mexican");
-        categoryRepository.save(cat4);
+        categoryRepository.save(cat4).block();
 
         Category cat5 = new Category();
         cat5.setDescription("Fast Food");
-        categoryRepository.save(cat5);
+        categoryRepository.save(cat5).block();
 
         UnitOfMeasure uom1 = new UnitOfMeasure();
         uom1.setDescription("Teaspoon");
-        unitOfMeasureRepository.save(uom1);
+        unitOfMeasureRepository.save(uom1).block();
 
         UnitOfMeasure uom2 = new UnitOfMeasure();
         uom2.setDescription("Tablespoon");
-        unitOfMeasureRepository.save(uom2);
+        unitOfMeasureRepository.save(uom2).block();
 
         UnitOfMeasure uom3 = new UnitOfMeasure();
         uom3.setDescription("Cup");
-        unitOfMeasureRepository.save(uom3);
+        unitOfMeasureRepository.save(uom3).block();
 
         UnitOfMeasure uom4 = new UnitOfMeasure();
         uom4.setDescription("Pinch");
-        unitOfMeasureRepository.save(uom4);
+        unitOfMeasureRepository.save(uom4).block();
 
         UnitOfMeasure uom5 = new UnitOfMeasure();
         uom5.setDescription("Ounce");
-        unitOfMeasureRepository.save(uom5);
+        unitOfMeasureRepository.save(uom5).block();
 
         UnitOfMeasure uom6 = new UnitOfMeasure();
         uom6.setDescription("Each");
-        unitOfMeasureRepository.save(uom6);
+        unitOfMeasureRepository.save(uom6).block();
 
         UnitOfMeasure uom7 = new UnitOfMeasure();
         uom7.setDescription("Pint");
-        unitOfMeasureRepository.save(uom7);
+        unitOfMeasureRepository.save(uom7).block();
 
         UnitOfMeasure uom8 = new UnitOfMeasure();
         uom8.setDescription("Dash");
-        unitOfMeasureRepository.save(uom8);
+        unitOfMeasureRepository.save(uom8).block();
 
         Recipe recipe1 = new Recipe();
         recipe1.setDescription("Guacamole, a dip made from avocados, is originally from Mexico. The name is derived from two Aztec Nahuatl words—ahuacatl (avocado) and molli (sauce).");
@@ -112,15 +113,15 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         recipe1.setDifficulty(Difficulty.EASY);
-        recipe1.addCategory(categoryRepository.findByDescription("Mexican").get());
-        recipe1.addIngredient(new Ingredient("Ancho chili powder", "2", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe1.addIngredient(new Ingredient("Kosher salt", "1/2", unitOfMeasureRepository.findByDescription("Teaspoon").get()));
-        recipe1.addIngredient(new Ingredient("Fresh lime juice or lemon juice", "1", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe1.addIngredient(new Ingredient("minced red onion or thinly sliced green onion", "2", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe1.addIngredient(new Ingredient("Serrano chiles", "1-2", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe1.addIngredient(new Ingredient("Cilantro", "2", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe1.addIngredient(new Ingredient("Freshly grated black pepper", "1", unitOfMeasureRepository.findByDescription("Dash").get()));
-        recipe1.addIngredient(new Ingredient("Ripe tomato", "1/2", unitOfMeasureRepository.findByDescription("Each").get()));
+        recipe1.addCategory(categoryRepository.findByDescription("Mexican").block());
+        recipe1.addIngredient(new Ingredient("Ancho chili powder", "2", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe1.addIngredient(new Ingredient("Kosher salt", "1/2", unitOfMeasureRepository.findByDescription("Teaspoon").block()));
+        recipe1.addIngredient(new Ingredient("Fresh lime juice or lemon juice", "1", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe1.addIngredient(new Ingredient("minced red onion or thinly sliced green onion", "2", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe1.addIngredient(new Ingredient("Serrano chiles", "1-2", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe1.addIngredient(new Ingredient("Cilantro", "2", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe1.addIngredient(new Ingredient("Freshly grated black pepper", "1", unitOfMeasureRepository.findByDescription("Dash").block()));
+        recipe1.addIngredient(new Ingredient("Ripe tomato", "1/2", unitOfMeasureRepository.findByDescription("Each").block()));
         recipe1.setNotes(new Notes("Guacamole, a dip made from avocados, is originally from Mexico. The name is derived from two Aztec Nahuatl words—ahuacatl (avocado) and molli (sauce).\n" +
                 "\n" +
                 "MAKING GUACAMOLE IS EASY\n" +
@@ -160,26 +161,26 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         recipe2.setDifficulty(Difficulty.MODERATE);
-        recipe2.addCategory(categoryRepository.findByDescription("Mexican").get());
-        recipe2.addIngredient(new Ingredient("Ancho chili powder", "2", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe2.addIngredient(new Ingredient("Dried oregano", "1", unitOfMeasureRepository.findByDescription("Teaspoon").get()));
-        recipe2.addIngredient(new Ingredient("Dried cumin", "1", unitOfMeasureRepository.findByDescription("Teaspoon").get()));
-        recipe2.addIngredient(new Ingredient("Sugar", "1", unitOfMeasureRepository.findByDescription("Teaspoon").get()));
-        recipe2.addIngredient(new Ingredient("Salt", "1/2", unitOfMeasureRepository.findByDescription("Teaspoon").get()));
-        recipe2.addIngredient(new Ingredient("Garlic", "1", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Finely grated orange zest", "1", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe2.addIngredient(new Ingredient("Fresh-squeezed orange juice", "3", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe2.addIngredient(new Ingredient("Olive oil", "2", unitOfMeasureRepository.findByDescription("Tablespoon").get()));
-        recipe2.addIngredient(new Ingredient("Boneless chicken thighs", "4-6", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Corn tortillas", "8", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Packed baby arugula", "3", unitOfMeasureRepository.findByDescription("Cup").get()));
-        recipe2.addIngredient(new Ingredient("Ripe avocados", "2", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Radishes", "4", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Cherry tomatoes", "1/2", unitOfMeasureRepository.findByDescription("Pint").get()));
-        recipe2.addIngredient(new Ingredient("Red onion", "1/4", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Roughly chopped cilantro", "1", unitOfMeasureRepository.findByDescription("Each").get()));
-        recipe2.addIngredient(new Ingredient("Sour cream thinned with 1/4 cup milk", "1/2", unitOfMeasureRepository.findByDescription("Cup").get()));
-        recipe2.addIngredient(new Ingredient("Lime", "1", unitOfMeasureRepository.findByDescription("Each").get()));
+        recipe2.addCategory(categoryRepository.findByDescription("Mexican").block());
+        recipe2.addIngredient(new Ingredient("Ancho chili powder", "2", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe2.addIngredient(new Ingredient("Dried oregano", "1", unitOfMeasureRepository.findByDescription("Teaspoon").block()));
+        recipe2.addIngredient(new Ingredient("Dried cumin", "1", unitOfMeasureRepository.findByDescription("Teaspoon").block()));
+        recipe2.addIngredient(new Ingredient("Sugar", "1", unitOfMeasureRepository.findByDescription("Teaspoon").block()));
+        recipe2.addIngredient(new Ingredient("Salt", "1/2", unitOfMeasureRepository.findByDescription("Teaspoon").block()));
+        recipe2.addIngredient(new Ingredient("Garlic", "1", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Finely grated orange zest", "1", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe2.addIngredient(new Ingredient("Fresh-squeezed orange juice", "3", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe2.addIngredient(new Ingredient("Olive oil", "2", unitOfMeasureRepository.findByDescription("Tablespoon").block()));
+        recipe2.addIngredient(new Ingredient("Boneless chicken thighs", "4-6", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Corn tortillas", "8", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Packed baby arugula", "3", unitOfMeasureRepository.findByDescription("Cup").block()));
+        recipe2.addIngredient(new Ingredient("Ripe avocados", "2", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Radishes", "4", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Cherry tomatoes", "1/2", unitOfMeasureRepository.findByDescription("Pint").block()));
+        recipe2.addIngredient(new Ingredient("Red onion", "1/4", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Roughly chopped cilantro", "1", unitOfMeasureRepository.findByDescription("Each").block()));
+        recipe2.addIngredient(new Ingredient("Sour cream thinned with 1/4 cup milk", "1/2", unitOfMeasureRepository.findByDescription("Cup").block()));
+        recipe2.addIngredient(new Ingredient("Lime", "1", unitOfMeasureRepository.findByDescription("Each").block()));
         recipe2.setNotes(new Notes("We have a family motto and it is this: Everything goes better in a tortilla.\n" +
                 "\n" +
                 "Any and every kind of leftover can go inside a warm tortilla, usually with a healthy dose of pickled jalapenos. I can always sniff out a late-night snacker when the aroma of tortillas heating in a hot pan on the stove comes wafting through the house.\n" +
@@ -199,7 +200,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
                 "\n" +
                 "You could also easily double or even triple this recipe for a larger party. A taco and a cold beer on a warm day? Now that’s living!"));
 
-        recipeRepository.save(recipe1);
-        recipeRepository.save(recipe2);
+        recipeRepository.save(recipe1).block();
+        recipeRepository.save(recipe2).block();
     }
 }

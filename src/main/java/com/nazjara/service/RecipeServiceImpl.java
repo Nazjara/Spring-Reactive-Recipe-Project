@@ -31,12 +31,12 @@ public class RecipeServiceImpl implements RecipeService {
     public Iterable<Recipe> getRecipes() {
         log.debug("getRecipes() called");
 
-        return recipeRepository.findAll();
+        return recipeRepository.findAll().toIterable();
     }
 
     @Override
     public Recipe findById(String id) {
-        return recipeRepository.findById(id).orElseThrow(() ->
+        return recipeRepository.findById(id).blockOptional().orElseThrow(() ->
                 new NotFoundException(String.format("Recipe not found for id: %s", id)));
     }
 
@@ -45,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand) {
         Recipe recipe = recipeCommandToRecipe.convert(recipeCommand);
 
-        Recipe savedRecipe = recipeRepository.save(recipe);
+        Recipe savedRecipe = recipeRepository.save(recipe).block();
         return recipeToRecipeCommand.convert(savedRecipe);
     }
 
