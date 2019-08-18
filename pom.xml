@@ -11,8 +11,8 @@
     <groupId>com.nazjara</groupId>
     <artifactId>spring-recipe-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Spring Recipe Project</name>
-    <description>Spring Recipe Project</description>
+    <name>Spring Reactive Recipe Project</name>
+    <description>Spring Reactive Recipe Project</description>
 
     <properties>
         <java.version>11</java.version>
