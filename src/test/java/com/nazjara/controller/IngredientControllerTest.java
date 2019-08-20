@@ -2,6 +2,7 @@ package com.nazjara.controller;
 
 import com.nazjara.command.IngredientCommand;
 import com.nazjara.command.RecipeCommand;
+import com.nazjara.command.UnitOfMeasureCommand;
 import com.nazjara.service.IngredientService;
 import com.nazjara.service.RecipeService;
 import com.nazjara.service.UnitOfMeasureService;
@@ -14,8 +15,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.HashSet;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -52,7 +53,7 @@ public class IngredientControllerTest {
     public void testListIngredients() throws Exception {
         //given
         RecipeCommand recipeCommand = new RecipeCommand();
-        when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
+        when(recipeService.findRecipeCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         //when
         mockMvc.perform(get("/recipe/1/ingredients"))
@@ -70,7 +71,7 @@ public class IngredientControllerTest {
         IngredientCommand ingredientCommand = new IngredientCommand();
 
         //when
-        when(ingredientService.findIngredientCommandById(anyString(), anyString())).thenReturn(ingredientCommand);
+        when(ingredientService.findIngredientCommandById(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
 
         //then
         mockMvc.perform(get("/recipe/1/ingredient/2"))
@@ -86,8 +87,8 @@ public class IngredientControllerTest {
         recipeCommand.setId("1");
 
         //when
-        Mockito.lenient().when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
-        Mockito.lenient().when(unitOfMeasureService.findAll()).thenReturn(new HashSet<>());
+        Mockito.lenient().when(recipeService.findRecipeCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
+        Mockito.lenient().when(unitOfMeasureService.findAll()).thenReturn(Flux.just(new UnitOfMeasureCommand()));
 
         //then
         mockMvc.perform(get("/recipe/1/ingredient/new"))
@@ -103,8 +104,8 @@ public class IngredientControllerTest {
         IngredientCommand ingredientCommand = new IngredientCommand();
 
         //when
-        when(ingredientService.findIngredientCommandById(anyString(), anyString())).thenReturn(ingredientCommand);
-        when(unitOfMeasureService.findAll()).thenReturn(new HashSet<>());
+        when(ingredientService.findIngredientCommandById(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
+        when(unitOfMeasureService.findAll()).thenReturn(Flux.just(new UnitOfMeasureCommand()));
 
         //then
         mockMvc.perform(get("/recipe/1/ingredient/2/update"))
@@ -122,7 +123,7 @@ public class IngredientControllerTest {
         command.setRecipeId("2");
 
         //when
-        when(ingredientService.saveIngredientCommand(any())).thenReturn(command);
+        when(ingredientService.saveIngredientCommand(any())).thenReturn(Mono.just(command));
 
         //then
         mockMvc.perform(post("/recipe/2/ingredient")
@@ -137,6 +138,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testDeleteIngredient() throws Exception {
+        when(ingredientService.deleteById(anyString(), anyString())).thenReturn(Mono.empty());
 
         //then
         mockMvc.perform(get("/recipe/2/ingredient/3/delete")
@@ -145,6 +147,5 @@ public class IngredientControllerTest {
                 .andExpect(view().name("redirect:/recipe/2/ingredients"));
 
         verify(ingredientService, times(1)).deleteById(anyString(), anyString());
-
     }
 }

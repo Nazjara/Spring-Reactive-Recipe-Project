@@ -5,6 +5,7 @@ import com.nazjara.converter.UnitOfMeasureToUnitOfMeasureCommand;
 import com.nazjara.repository.UnitOfMeasureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,9 +26,7 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
 
     @Override
-    public Set<UnitOfMeasureCommand> findAll() {
-        return StreamSupport.stream(unitOfMeasureRepository.findAll().toIterable().spliterator(), false)
-        .map(unitOfMeasureToUnitOfMeasureCommand::convert)
-        .collect(Collectors.toSet());
+    public Flux<UnitOfMeasureCommand> findAll() {
+        return unitOfMeasureRepository.findAll().map(unitOfMeasureToUnitOfMeasureCommand::convert);
     }
 }

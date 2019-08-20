@@ -2,11 +2,13 @@ package com.nazjara.service;
 
 import com.nazjara.command.RecipeCommand;
 import com.nazjara.model.Recipe;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface RecipeService {
-    Iterable<Recipe> getRecipes();
-    Recipe findById(String id);
-    RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
-    RecipeCommand findRecipeCommandById(String id);
-    void deleteById(String id);
+    Flux<Recipe> getRecipes();
+    Mono<Recipe> findById(String id);
+    Mono<RecipeCommand> saveRecipeCommand(RecipeCommand recipeCommand);
+    Mono<RecipeCommand> findRecipeCommandById(String id);
+    Mono<Void> deleteById(String id);
 }

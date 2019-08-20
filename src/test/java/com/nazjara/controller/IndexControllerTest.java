@@ -10,10 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Flux;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,12 +32,13 @@ public class IndexControllerTest {
     @Mock
     public Model model;
 
-    @Mock
-    public Set<Recipe> set;
-
     @Before
     public void setUp() {
-        when(recipeService.getRecipes()).thenReturn(set);
+        List<Recipe> recipes = new ArrayList<>();
+        recipes.add(new Recipe());
+        recipes.add(new Recipe());
+
+        when(recipeService.getRecipes()).thenReturn(Flux.fromIterable(recipes));
         when(model.addAttribute(anyString(), any())).thenReturn(model);
     }
 
@@ -43,12 +46,12 @@ public class IndexControllerTest {
     public void testGetIndexPage() {
         String view = indexController.getIndexPage(model);
 
-        ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor<List<Recipe>> captor = ArgumentCaptor.forClass(List.class);
 
         verify(recipeService).getRecipes();
         verify(model).addAttribute(eq("recipes"), captor.capture());
 
         assertEquals("index", view);
-        assertSame(captor.getValue(), set);
+        assertEquals(2, captor.getValue().size());
     }
 }

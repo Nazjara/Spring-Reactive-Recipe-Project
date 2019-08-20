@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -39,11 +40,12 @@ public class RecipeControllerTest {
                .standaloneSetup(recipeController)
                .setControllerAdvice(new ControllerExceptionHandler()).build();
 
-       when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
+       when(recipeService.findRecipeCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
        when(recipeCommand.getImage()).thenReturn(getClass().getClassLoader().getResourceAsStream("GrilledChickenTacos.jpg").readAllBytes());
        when(recipeCommand.getId()).thenReturn("2");
-       when(recipeService.saveRecipeCommand(any())).thenReturn(recipeCommand);
-       when(recipeService.findRecipeCommandById(anyString())).thenReturn(recipeCommand);
+       when(recipeService.saveRecipeCommand(any())).thenReturn(Mono.just(recipeCommand));
+       when(recipeService.findRecipeCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
+       when(recipeService.deleteById(anyString())).thenReturn(Mono.empty());
     }
 
     @Test

@@ -1,7 +1,8 @@
 package com.nazjara.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 public interface ImageService {
-    void saveImage(String recipeId, MultipartFile image);
+    Mono<Void> saveImage(String recipeId, MultipartFile image);
 }

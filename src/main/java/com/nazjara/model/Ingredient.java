@@ -1,7 +1,6 @@
 package com.nazjara.model;
 
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.UUID;
 
@@ -12,8 +11,6 @@ public class Ingredient {
     private String description;
     private String amount;
     private Recipe recipe;
-
-    @DBRef
     private UnitOfMeasure unitOfMeasure;
 
     public Ingredient() {

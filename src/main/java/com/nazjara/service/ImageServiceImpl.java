@@ -4,8 +4,8 @@ import com.nazjara.model.Recipe;
 import com.nazjara.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -18,16 +18,20 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    @Transactional
-    public void saveImage(String recipeId, MultipartFile image) {
-        Recipe recipe = recipeRepository.findById(recipeId).block();
+    public Mono<Void> saveImage(String recipeId, MultipartFile image) {
+        Mono<Recipe> recipeMono = recipeRepository.findById(recipeId)
+                .map(recipe -> {
+                    try {
+                        recipe.setImage(image.getBytes());
+                        return recipe;
+                    } catch (Exception e) {
+                        log.error("Unable to save image", e);
+                        throw new RuntimeException();
+                    }
+                });
 
-        try {
-            recipe.setImage(image.getBytes());
-        } catch (Exception e) {
-            log.error("Unable to save image", e);
-        }
+        recipeRepository.save(recipeMono.block()).block();
 
-        recipeRepository.save(recipe).block();
+        return Mono.empty();
     }
 }

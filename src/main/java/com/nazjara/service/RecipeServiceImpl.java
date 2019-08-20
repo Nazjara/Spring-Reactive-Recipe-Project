@@ -3,13 +3,13 @@ package com.nazjara.service;
 import com.nazjara.command.RecipeCommand;
 import com.nazjara.converter.RecipeCommandToRecipe;
 import com.nazjara.converter.RecipeToRecipeCommand;
-import com.nazjara.exception.NotFoundException;
 import com.nazjara.model.Recipe;
 import com.nazjara.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -28,35 +28,39 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Iterable<Recipe> getRecipes() {
+    public Flux<Recipe> getRecipes() {
         log.debug("getRecipes() called");
 
-        return recipeRepository.findAll().toIterable();
+        return recipeRepository.findAll();
     }
 
     @Override
-    public Recipe findById(String id) {
-        return recipeRepository.findById(id).blockOptional().orElseThrow(() ->
-                new NotFoundException(String.format("Recipe not found for id: %s", id)));
+    public Mono<Recipe> findById(String id) {
+        return recipeRepository.findById(id);
     }
 
     @Override
-    @Transactional
-    public RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand) {
-        Recipe recipe = recipeCommandToRecipe.convert(recipeCommand);
-
-        Recipe savedRecipe = recipeRepository.save(recipe).block();
-        return recipeToRecipeCommand.convert(savedRecipe);
+    public Mono<RecipeCommand> saveRecipeCommand(RecipeCommand recipeCommand) {
+        return recipeRepository.save(recipeCommandToRecipe.convert(recipeCommand))
+                .map(recipeToRecipeCommand::convert);
     }
 
     @Override
-    @Transactional
-    public RecipeCommand findRecipeCommandById(String id) {
-        return recipeToRecipeCommand.convert(findById(id));
+    public Mono<RecipeCommand> findRecipeCommandById(String id) {
+        return recipeRepository.findById(id)
+                .map(recipe -> {
+                    RecipeCommand recipeCommand = recipeToRecipeCommand.convert(recipe);
+
+                    recipeCommand.getIngredients().forEach(ingredientCommand -> {
+                        ingredientCommand.setRecipeId(recipeCommand.getId());
+                    });
+
+                    return recipeCommand;
+                });
     }
 
     @Override
-    public void deleteById(String id) {
-        recipeRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return recipeRepository.deleteById(id);
     }
 }

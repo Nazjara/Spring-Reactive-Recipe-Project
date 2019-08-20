@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +40,7 @@ public class ImageControllerTest {
         multipartFile = new MockMultipartFile("image", "testing.txt", "text/plain",
                         "test".getBytes());
 
-        doNothing().when(imageService).saveImage(anyString(), any());
+        when(imageService.saveImage(anyString(), any())).thenReturn(Mono.empty());
     }
 
     @Test
