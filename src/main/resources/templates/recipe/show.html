@@ -123,14 +123,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-primary" th:if="${image != null && !image.isEmpty()}">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h1 class="panel-title">Serving example</h1>
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <img th:src="@{'data:image/jpg;base64,' + ${image}}" width="500" height="500"/>
+                                <img th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}"
+                                     width="500" height="500">
                             </div>
                         </div>
                     </div>

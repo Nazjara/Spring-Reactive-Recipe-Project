@@ -1,15 +1,14 @@
 package com.nazjara.controller;
 
 import com.nazjara.command.RecipeCommand;
-import com.nazjara.exception.NotFoundException;
 import com.nazjara.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.Base64;
@@ -19,33 +18,27 @@ import java.util.Base64;
 public class RecipeController {
 
     private final RecipeService recipeService;
+    private WebDataBinder webDataBinder;
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        this.webDataBinder = webDataBinder;
+    }
+
     @GetMapping("/recipe/{id}")
     public String getById(@PathVariable String id, Model model) {
-        RecipeCommand recipe = recipeService.findRecipeCommandById(id).block();
-
-        model.addAttribute("recipe", recipe);
-
-        if (recipe.getImage() != null) {
-            model.addAttribute("image", Base64.getEncoder().encodeToString(recipe.getImage()));
-        }
+        model.addAttribute("recipe", recipeService.findRecipeCommandById(id));
 
         return "recipe/show";
     }
 
     @GetMapping("/recipe/{id}/update")
     public String updateById(@PathVariable String id, Model model) {
-        RecipeCommand recipeCommand = recipeService.findRecipeCommandById(id).block();
-
-        model.addAttribute("recipe", recipeCommand);
-
-        if (recipeCommand.getImage() != null) {
-            model.addAttribute("image", Base64.getEncoder().encodeToString(recipeCommand.getImage()));
-        }
+        model.addAttribute("recipe", recipeService.findRecipeCommandById(id));
 
         return "recipe/recipeform";
     }
@@ -58,9 +51,11 @@ public class RecipeController {
     }
 
     @PostMapping("recipe")
-    public String saveOrUpdate(@ModelAttribute("recipe") @Valid RecipeCommand recipeCommand, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> log.debug(error.toString()));
+    public String saveOrUpdate(@ModelAttribute("recipe") RecipeCommand recipeCommand) {
+        webDataBinder.validate();
+
+        if (webDataBinder.getBindingResult().hasErrors()) {
+            webDataBinder.getBindingResult().getAllErrors().forEach(error -> log.debug(error.toString()));
 
             return "recipe/recipeform";
         }
@@ -70,20 +65,20 @@ public class RecipeController {
 
     @GetMapping("recipe/{id}/delete")
     public String deleteById(@PathVariable String id) {
-        recipeService.deleteById(id).block();
+        recipeService.deleteById(id);
         return "redirect:/";
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handleNotFoundException(Exception exception) {
-        log.error(exception.getMessage());
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("error");
-        modelAndView.addObject("status", "404 Not Found");
-        modelAndView.addObject("exception", exception);
-
-        return modelAndView;
-    }
+//    @ExceptionHandler(NotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ModelAndView handleNotFoundException(Exception exception) {
+//        log.error(exception.getMessage());
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("error");
+//        modelAndView.addObject("status", "404 Not Found");
+//        modelAndView.addObject("exception", exception);
+//
+//        return modelAndView;
+//    }
 }
