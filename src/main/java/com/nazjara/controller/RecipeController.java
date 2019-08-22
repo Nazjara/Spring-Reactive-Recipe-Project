@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Controller
@@ -46,21 +47,22 @@ public class RecipeController {
     }
 
     @PostMapping("recipe")
-    public String saveOrUpdate(@ModelAttribute("recipe") RecipeCommand recipeCommand) {
+    public Mono<String> saveOrUpdate(@ModelAttribute("recipe") RecipeCommand recipeCommand) {
         webDataBinder.validate();
 
         if (webDataBinder.getBindingResult().hasErrors()) {
             webDataBinder.getBindingResult().getAllErrors().forEach(error -> log.debug(error.toString()));
 
-            return "recipe/recipeform";
+            return Mono.just("recipe/recipeform");
         }
 
-        return "redirect:/recipe/" + recipeService.saveRecipeCommand(recipeCommand).block().getId();
+        return recipeService.saveRecipeCommand(recipeCommand).map(recipeCommand1 -> "redirect:/recipe/" + recipeCommand1.getId());
     }
 
     @GetMapping("recipe/{id}/delete")
     public String deleteById(@PathVariable String id) {
-        recipeService.deleteById(id);
+        recipeService.deleteById(id).subscribe();
+
         return "redirect:/";
     }
 }

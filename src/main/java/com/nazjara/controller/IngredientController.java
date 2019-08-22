@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Controller
@@ -72,7 +73,7 @@ public class IngredientController {
     }
 
     @PostMapping("recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command, Model model){
+    public Mono<String> saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command, Model model){
         webDataBinder.validate();
 
         if(webDataBinder.getBindingResult().hasErrors()){
@@ -80,14 +81,10 @@ public class IngredientController {
                 log.debug(objectError.toString());
             });
 
-            return "ingredient/ingredientform";
+            return Mono.just("ingredient/ingredientform");
         }
-
-        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
-
-        log.debug("saved ingredient id:" + savedCommand.getId());
-
-        return "redirect:/recipe/" + savedCommand.getRecipeId() + "/ingredient/" + savedCommand.getId() + "/show";
+        return ingredientService.saveIngredientCommand(command)
+                .map(ingredientCommand -> "redirect:/recipe/" + ingredientCommand.getRecipeId() + "/ingredient/" + ingredientCommand.getId());
     }
 
     @GetMapping("recipe/{recipeId}/ingredient/{id}/delete")
@@ -95,7 +92,7 @@ public class IngredientController {
                                    @PathVariable String id){
 
         log.debug("deleting ingredient id:" + id);
-        ingredientService.deleteById(recipeId, id).block();
+        ingredientService.deleteById(recipeId, id).subscribe();
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
     }
