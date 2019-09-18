@@ -3,6 +3,7 @@ package com.nazjara.service;
 import com.nazjara.command.RecipeCommand;
 import com.nazjara.converter.RecipeCommandToRecipe;
 import com.nazjara.converter.RecipeToRecipeCommand;
+import com.nazjara.exception.NotFoundException;
 import com.nazjara.model.Recipe;
 import com.nazjara.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,11 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.save(recipeCommandToRecipe.convert(recipeCommand))
                 .map(recipeToRecipeCommand::convert);
     }
-
+// throw new NotFoundException(String.format("Recipe with id = %s not found", id));
     @Override
     public Mono<RecipeCommand> findRecipeCommandById(String id) {
         return recipeRepository.findById(id)
+                .switchIfEmpty(Mono.error(new NotFoundException(String.format("Recipe with id = %s not found", id))))
                 .map(recipe -> {
                     RecipeCommand recipeCommand = recipeToRecipeCommand.convert(recipe);
 

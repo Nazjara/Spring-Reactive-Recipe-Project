@@ -1,6 +1,7 @@
 package com.nazjara.controller;
 
 import com.nazjara.service.ImageService;
+import com.nazjara.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
 
     private final ImageService imageService;
+    private final RecipeService recipeService;
 
     @Autowired
-    public ImageController(ImageService imageService) {
+    public ImageController(ImageService imageService, RecipeService recipeService) {
         this.imageService = imageService;
+        this.recipeService = recipeService;
     }
 
     @GetMapping("recipe/{id}/image")
@@ -31,26 +34,27 @@ public class ImageController {
 
     @PostMapping("recipe/{id}/image")
     public String saveImage(@PathVariable String id, @RequestParam("image") MultipartFile image) {
-        imageService.saveImage(id, image).block();
+        imageService.saveImage(id, image).subscribe();
 
         return String.format("redirect:/recipe/%s", id);
     }
 
-//    @GetMapping("recipe/{id}/image")
-//    public void renderImageFromDB(@PathVariable String id, HttpServletResponse response) throws IOException {
-//        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
-//
-//        if (recipeCommand.getImage() != null) {
-//            byte[] byteArray = new byte[recipeCommand.getImage().length];
+//    @GetMapping("recipe/{id}/recipeimage")
+//    public Mono<ServerResponse> renderImageFromDB(@PathVariable String id) {
+//        return recipeService.findRecipeCommandById(id).flatMap(recipe -> {
+//            byte[] byteArray = new byte[recipe.getImage().length];
 //            int i = 0;
 //
-//            for (Byte wrappedByte : recipeCommand.getImage()){
+//            for (Byte wrappedByte : recipe.getImage()){
 //                byteArray[i++] = wrappedByte; //auto unboxing
 //            }
 //
-//            response.setContentType("image/jpeg");
-//            InputStream is = new ByteArrayInputStream(byteArray);
-//            IOUtils.copy(is, response.getOutputStream());
-//        }
+//            DataBuffer buffer = new DefaultDataBufferFactory().wrap(byteArray);
+//
+//            return ServerResponse
+//                    .ok()
+//                    .contentType(MediaType.IMAGE_JPEG)
+//                    .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
+//        });
 //    }
 }

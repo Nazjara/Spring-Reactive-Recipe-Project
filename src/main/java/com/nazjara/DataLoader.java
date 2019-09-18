@@ -85,6 +85,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         unitOfMeasureRepository.save(uom8).block();
 
         Recipe recipe1 = new Recipe();
+        recipe1.setId("1");
         recipe1.setDescription("Guacamole, a dip made from avocados, is originally from Mexico. The name is derived from two Aztec Nahuatl words—ahuacatl (avocado) and molli (sauce).");
         recipe1.setPrepTime(10);
         recipe1.setCookTime(0);
@@ -133,6 +134,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
                 "Check for ripeness by gently pressing the outside of the avocado. If there is no give, the avocado is not ripe yet and will not taste good. If there is a little give, the avocado is ripe. If there is a lot of give, the avocado may be past ripe and not good. In this case, taste test first before using."));
 
         Recipe recipe2 = new Recipe();
+        recipe2.setId("2");
         recipe2.setDescription("Spicy grilled chicken tacos! Quick marinade, then grill. Ready in about 30 minutes. Great for a quick weeknight dinner, backyard cookouts, and tailgate parties.");
         recipe2.setPrepTime(20);
         recipe2.setCookTime(10);

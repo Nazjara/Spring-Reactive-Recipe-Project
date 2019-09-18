@@ -1,6 +1,7 @@
 package com.nazjara.controller;
 
 import com.nazjara.service.ImageService;
+import com.nazjara.service.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,9 @@ public class ImageControllerTest {
     @Mock
     ImageService imageService;
 
+    @Mock
+    RecipeService recipeService;
+
     ImageController controller;
 
     MockMvc mockMvc;
@@ -33,7 +37,7 @@ public class ImageControllerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        controller = new ImageController(imageService);
+        controller = new ImageController(imageService, recipeService);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
                 .setControllerAdvice(new ControllerExceptionHandler()).build();
