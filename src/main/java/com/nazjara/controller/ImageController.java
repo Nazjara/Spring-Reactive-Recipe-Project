@@ -3,14 +3,27 @@ package com.nazjara.controller;
 import com.nazjara.service.ImageService;
 import com.nazjara.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Slf4j
 @Controller
@@ -32,29 +45,27 @@ public class ImageController {
         return "recipe/imageform";
     }
 
-    @PostMapping("recipe/{id}/image")
-    public String saveImage(@PathVariable String id, @RequestParam("image") MultipartFile image) {
-        imageService.saveImage(id, image).subscribe();
-
-        return String.format("redirect:/recipe/%s", id);
+    @PostMapping(path = "recipe/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<String> saveImage(@PathVariable String id, @RequestPart("image") Mono<FilePart> file) {
+        return file.flatMap(it -> {
+            it.transferTo(Paths.get("/tmp/" + it.filename()));
+            try {
+                return imageService.saveImage(id, IOUtils.toByteArray(Files.newInputStream(Paths.get("/tmp/" + it.filename()))));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).then(Mono.just(String.format("redirect:/recipe/%s", id)));
     }
 
-//    @GetMapping("recipe/{id}/recipeimage")
-//    public Mono<ServerResponse> renderImageFromDB(@PathVariable String id) {
-//        return recipeService.findRecipeCommandById(id).flatMap(recipe -> {
-//            byte[] byteArray = new byte[recipe.getImage().length];
-//            int i = 0;
-//
-//            for (Byte wrappedByte : recipe.getImage()){
-//                byteArray[i++] = wrappedByte; //auto unboxing
-//            }
-//
-//            DataBuffer buffer = new DefaultDataBufferFactory().wrap(byteArray);
-//
-//            return ServerResponse
-//                    .ok()
-//                    .contentType(MediaType.IMAGE_JPEG)
-//                    .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
-//        });
-//    }
+    public Mono<ServerResponse> renderImageFromDB(ServerRequest serverRequest) {
+        return recipeService.findRecipeCommandById(serverRequest.pathVariable("id")).flatMap(recipe -> {
+            DataBuffer buffer = new DefaultDataBufferFactory().wrap(recipe.getImage());
+
+            return ServerResponse
+                    .ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
+        });
+    }
 }

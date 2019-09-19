@@ -1,5 +1,6 @@
 package com.nazjara.configuration;
 
+import com.nazjara.controller.ImageController;
 import com.nazjara.model.Recipe;
 import com.nazjara.service.RecipeService;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +16,12 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class WebConfig {
 
     @Bean
-    public RouterFunction<?> routes(RecipeService recipeService) {
+    public RouterFunction<ServerResponse> routes(RecipeService recipeService, ImageController imageController) {
         return RouterFunctions.route(GET("/api/recipes"), serverRequest ->
             ServerResponse
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(recipeService.getRecipes(), Recipe.class));
+                    .body(recipeService.getRecipes(), Recipe.class))
+                .andRoute(GET("/recipe/{id}/recipeimage"), imageController::renderImageFromDB);
     }
 }

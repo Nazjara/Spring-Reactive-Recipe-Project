@@ -23,11 +23,14 @@ public class RouterFunctionTest {
     @Mock
     RecipeService recipeService;
 
+    @Mock
+    ImageController imageController;
+
     @Before
     public void setUp() {
         WebConfig webConfig = new WebConfig();
 
-        RouterFunction<?> routerFunction = webConfig.routes(recipeService);
+        RouterFunction<?> routerFunction = webConfig.routes(recipeService, imageController);
 
         webTestClient = WebTestClient.bindToRouterFunction(routerFunction).build();
     }

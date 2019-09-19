@@ -183,8 +183,8 @@
                             <div class="row">
                                 <div class="panel-body">
                                     <div class="row">
-                                        <div class="col-md-10" th:if="${image != null && !image.isEmpty()}">
-                                            <img th:src="@{'data:image/jpg;base64,' + ${image}}" width="500" height="500"/>
+                                        <div class="col-md-10">
+                                            <img th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}" width="500" height="500"/>
                                         </div>
                                         <div class="col-md-2">
                                             <a class="btn btn-default" th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change image</a>

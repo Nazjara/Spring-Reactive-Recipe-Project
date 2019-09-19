@@ -1,10 +1,10 @@
 package com.nazjara.service;
 
+import com.nazjara.exception.NotFoundException;
 import com.nazjara.model.Recipe;
 import com.nazjara.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -18,20 +18,17 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Mono<Void> saveImage(String recipeId, MultipartFile image) {
-        Mono<Recipe> recipeMono = recipeRepository.findById(recipeId)
-                .map(recipe -> {
+    public Mono<Recipe> saveImage(String recipeId, byte[] image) {
+        return recipeRepository.findById(recipeId)
+                .switchIfEmpty(Mono.error(new NotFoundException(String.format("Recipe with id = %s not found", recipeId))))
+                .flatMap(recipe -> {
                     try {
-                        recipe.setImage(image.getBytes());
-                        return recipe;
+                        recipe.setImage(image);
+                        return recipeRepository.save(recipe);
                     } catch (Exception e) {
                         log.error("Unable to save image", e);
                         throw new RuntimeException();
                     }
                 });
-
-        recipeRepository.save(recipeMono.block()).block();
-
-        return Mono.empty();
     }
 }

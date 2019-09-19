@@ -8,10 +8,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
-import static junit.framework.TestCase.assertSame;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,9 +24,6 @@ public class ImageServiceImplTest {
     @Mock
     private Recipe recipe;
 
-    @Mock
-    private MultipartFile file;
-
     private ImageService imageService;
 
     @Before
@@ -36,14 +32,13 @@ public class ImageServiceImplTest {
 
         when(recipeRepository.findById(anyString())).thenReturn(Mono.just(recipe));
         when(recipeRepository.save(any(Recipe.class))).thenReturn(Mono.just(recipe));
-        when(file.getBytes()).thenReturn(new byte[]{1,2,3});
     }
 
     @Test
     public void saveImageFile() throws Exception {
         ArgumentCaptor<Recipe> captor = ArgumentCaptor.forClass(Recipe.class);
 
-        imageService.saveImage("1", file).block();
+        imageService.saveImage("1", new byte[]{1,2,3}).block();
 
         verify(recipeRepository).findById("1");
         verify(recipeRepository).save(captor.capture());
