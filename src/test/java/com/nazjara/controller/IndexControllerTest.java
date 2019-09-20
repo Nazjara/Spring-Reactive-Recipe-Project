@@ -46,12 +46,12 @@ public class IndexControllerTest {
     public void testGetIndexPage() {
         String view = indexController.getIndexPage(model);
 
-        ArgumentCaptor<List<Recipe>> captor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Flux<Recipe>> captor = ArgumentCaptor.forClass(Flux.class);
 
         verify(recipeService).getRecipes();
         verify(model).addAttribute(eq("recipes"), captor.capture());
 
         assertEquals("index", view);
-        assertEquals(2, captor.getValue().size());
+        assertEquals(2, (long) captor.getValue().count().block());
     }
 }
